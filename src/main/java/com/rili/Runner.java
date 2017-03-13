@@ -31,13 +31,13 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        LOGGER.info("controller-dao analysis start...");
+      
+    LOGGER.info("controller-dao analysis start...");
         for (String filePath : cdPaths) {
             LOGGER.info("controller-dao analysis file name: {}", filePath);
             controllerDAOSv.test(filePath);
         }
         LOGGER.info("controller-dao analysis end...");
-
     }
 
 }
