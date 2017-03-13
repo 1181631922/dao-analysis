@@ -1,0 +1,39 @@
+# Maven
+target/
+
+# Test projects
+!src/test/AlarmClockMain/**/target/
+src/test/crm-domain-example/target.eclipse/
+src/test/crm-domain-example/target.maven/
+
+# IntelliJ IDEA
+*.iws
+*.iml
+*.ipr
+.idea/
+
+# Eclipse
+.classpath
+.project
+.settings
+.sonar4clipse
+.sonar
+*.sonar4clipseExternals
+
+# ---- Mac OS X
+.DS_Store
+Icon?
+# Thumbnails
+._*
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# ---- Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
+
+# ---- 配置信息
+src/main/resources/application.yml
