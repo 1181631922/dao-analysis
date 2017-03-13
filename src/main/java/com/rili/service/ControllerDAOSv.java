@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -23,10 +20,14 @@ public class ControllerDAOSv {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerDAOSv.class);
 
-    public void test() {
+    public void test(String fullFilePath) {
+        processMapData(fileData2MapData(fullFilePath));
+    }
+
+    private Map<String, Map<String, String>> fileData2MapData(String fullFilePath) {
         Map<String, String> fieldDeclarationMap = Maps.newHashMap();
         Map<String, String> unclassifiedUsageMap = Maps.newHashMap();
-        try (BufferedReader br = new BufferedReader(new FileReader("XXXXX"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fullFilePath))) {
             String line;
             String key = null;
             StringBuilder value = new StringBuilder();
@@ -75,7 +76,13 @@ public class ControllerDAOSv {
         } catch (IOException ioException) {
             LOGGER.error("IOException:{}", ioException);
         }
+        Map<String, Map<String, String>> result = Maps.newHashMap();
+        result.put("fieldDeclarationMap", fieldDeclarationMap);
+        result.put("unclassifiedUsageMap", unclassifiedUsageMap);
+        return result;
+    }
 
+    private void processMapData(Map<String, Map<String, String>> mapData) {
         String className;
         String methodName;
         String refClassName;
@@ -84,7 +91,7 @@ public class ControllerDAOSv {
         String[] temp2;
         String tempVariable;
         String tempStr;
-        for (Map.Entry<String, String> fieldDeclarationEntry : fieldDeclarationMap.entrySet()) {
+        for (Map.Entry<String, String> fieldDeclarationEntry : mapData.get("fieldDeclarationMap").entrySet()) {
             className = fieldDeclarationEntry.getKey();
             for (String s : StringUtils.splitByWholeSeparator(fieldDeclarationEntry.getValue(), ";")) {
                 if (StringUtils.isEmpty(s)) {
@@ -93,7 +100,7 @@ public class ControllerDAOSv {
                 temp1 = StringUtils.splitByWholeSeparator(s, " ");
                 refClassName = new String(temp1[1]);
                 tempVariable = new String(temp1[2]);
-                temp1 = StringUtils.splitByWholeSeparator(unclassifiedUsageMap.get(className), ";");
+                temp1 = StringUtils.splitByWholeSeparator(mapData.get("unclassifiedUsageMap").get(className), ";");
                 if (temp1 == null) {
                     continue;
                 }
