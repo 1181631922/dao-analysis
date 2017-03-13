@@ -25,7 +25,9 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        controllerDAOSv.test();
+//        controllerDAOSv.test();
+
+        System.out.print(slaveDAO.test());
     }
 
 }
