@@ -19,7 +19,6 @@
         <start-class>com.rili.Application</start-class>
     </properties>
 
-	<!-- 项目依赖 -->
 	<dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

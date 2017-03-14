@@ -21,4 +21,8 @@ public class Constant {
 
     public static final String USAGE_IN_IMPORT = "Usage in import";
 
+    public static final String FIELD_DECLARATION_MAP = "fieldDeclarationMap";
+
+    public static final String UNCLASSIFIED_USAGE_MAP = "unclassifiedUsageMap";
+
 }
