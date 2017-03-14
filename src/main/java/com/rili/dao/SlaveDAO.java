@@ -26,4 +26,9 @@ public class SlaveDAO {
         return jdbcTemplate.queryForList(sql);
     }
 
+    // TODO: 17/3/13 insert,构造参数五个:类名,方法名,表名,操作,时间
+    public void insertTable(String clazz, String method, String tableName, String operate, long time) {
+        jdbcTemplate.update("");
+    }
+
 }
