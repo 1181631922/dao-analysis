@@ -6,8 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by CYM on 2017/3/13.
@@ -21,9 +19,9 @@ public class SlaveDAO {
     @Resource(name = "jdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
-    public List<Map<String, Object>> test() {
-        String sql = "SELECT * FROM wx_statistics LIMIT 10";
-        return jdbcTemplate.queryForList(sql);
+    public void insertControllerDAO(String className, String methodName, String refClassName, String refMethodName) {
+        String sql = "INSERT INTO controller_dao_analysis (class_name, method_name, ref_class_name, ref_method_name) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, className, methodName, refClassName, refMethodName);
     }
 
     // TODO: 17/3/13 insert,构造参数五个:类名,方法名,表名,操作,时间

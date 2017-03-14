@@ -2,10 +2,12 @@ package com.rili.service;
 
 import com.google.common.collect.Maps;
 import com.rili.Constant;
+import com.rili.dao.SlaveDAO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -22,6 +24,9 @@ import java.util.Map;
 public class ControllerDAOSv {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerDAOSv.class);
+
+    @Autowired
+    private SlaveDAO slaveDAO;
 
 
     public void analyzeControllerDAOFile(String fullFilePath) {
@@ -115,7 +120,7 @@ public class ControllerDAOSv {
                             refMethodName = StringUtils.splitByWholeSeparator(StringUtils.substring(tempStr, StringUtils.indexOf(tempStr, tempVariable + "."), StringUtils.indexOf(tempStr, "(")), ".")[1];
                             if (!StringUtils.isAnyEmpty(className, methodName, refClassName, refMethodName)) {
                                 LOGGER.info("***** className:{}, methodName:{}, refClassName:{}, refMethodName:{} *****", className, methodName, refClassName, refMethodName);
-
+                                slaveDAO.insertControllerDAO(className, methodName, refClassName, refMethodName);
                             }
                         }
                     }
