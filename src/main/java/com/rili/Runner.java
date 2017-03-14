@@ -28,7 +28,7 @@ public class Runner implements CommandLineRunner {
         LOGGER.info("controller-dao analysis start...");
         for (String filePath : cdPaths) {
             LOGGER.info("controller-dao analysis file name: {}", filePath);
-            controllerDAOSv.test(filePath);
+            controllerDAOSv.analyzeControllerDAOFile(filePath);
         }
         LOGGER.info("controller-dao analysis end...");
 

@@ -23,8 +23,8 @@ public class ControllerDAOSv {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerDAOSv.class);
 
-    // TODO: 2017/3/14
-    public void test(String fullFilePath) {
+
+    public void analyzeControllerDAOFile(String fullFilePath) {
         processMapData(fileData2MapData(fullFilePath));
     }
 
