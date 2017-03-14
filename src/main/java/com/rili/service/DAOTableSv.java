@@ -19,8 +19,8 @@ import java.util.List;
  * Email: fanyafeng@live.cn
  */
 @Service
-public class ControllerDAOScan {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ControllerDAOScan.class);
+public class DAOTableSv {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DAOTableSv.class);
 
     public void test(String fullFilePath) {
         if (fullFilePath.contains("/")) {
