@@ -1,5 +1,6 @@
 package com.rili;
 
+import com.rili.dao.SlaveDAO;
 import com.rili.service.ControllerDAOSv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +21,22 @@ public class Runner implements CommandLineRunner {
     @Autowired
     private ControllerDAOSv controllerDAOSv;
 
-    @Value("${filePath.controllerDAO.path}")
-    private String[] cdPaths;
+    @Autowired
+    private SlaveDAO slaveDAO;
+
+//    @Value("${filePath.controllerDAO.path}")
+//    private String[] cdPaths;
 
     @Override
     public void run(String... strings) throws Exception {
 
         LOGGER.info("controller-dao analysis start...");
-        for (String filePath : cdPaths) {
-            LOGGER.info("controller-dao analysis file name: {}", filePath);
-            controllerDAOSv.analyzeControllerDAOFile(filePath);
-        }
+//        for (String filePath : cdPaths) {
+//            LOGGER.info("controller-dao analysis file name: {}", filePath);
+//            controllerDAOSv.analyzeControllerDAOFile(filePath);
+//        }
+        slaveDAO.insertTable("clazz","method","table","operation");
+
         LOGGER.info("controller-dao analysis end...");
 
     }
