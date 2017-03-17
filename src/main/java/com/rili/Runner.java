@@ -1,7 +1,10 @@
 package com.rili;
 
+import com.google.common.collect.Lists;
 import com.rili.dao.SlaveDAO;
 import com.rili.service.ControllerDAOSv;
+import com.rili.service.DAOTableSv;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,13 +85,6 @@ public class Runner implements CommandLineRunner {
 
     private void doAnalysis() {
         LOGGER.info("controller-dao analysis start...");
-//        for (String filePath : cdPaths) {
-//            LOGGER.info("controller-dao analysis file name: {}", filePath);
-//            controllerDAOSv.analyzeControllerDAOFile(filePath);
-//        }
-//        daoTableSv.test("/Users/fanyafeng/Downloads/wine_backend_master/common/src/main/java/com/wine/dao/AccessLogDAO.java");
-
-//        slaveDAO.insertTable(new InsertTableBean("clazz", "method", "table", "operation"));
         try {
 
             File file = new File("/Users/fanyafeng/Downloads/wine_backend_master/common/src/main/java/com/wine/dao");
