@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by CYM on 2017/3/13.
@@ -19,9 +21,19 @@ public class SlaveDAO {
     @Resource(name = "jdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
-    public void insertControllerDAO(String className, String methodName, String refClassName, String refMethodName) {
-        String sql = "INSERT INTO controller_dao_analysis (class_name, method_name, ref_class_name, ref_method_name) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, className, methodName, refClassName, refMethodName);
+    public void insertControllerDAO(String className, String methodName, String refClassName, String refMethodName, String date) {
+        String sql = "INSERT IGNORE INTO controller_dao_analysis (class_name, method_name, ref_class_name, ref_method_name, date) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, className, methodName, refClassName, refMethodName, date);
+    }
+
+    public void disableControllerDAO() {
+        String sql = "UPDATE controller_dao_analysis SET state = 0";
+        jdbcTemplate.update(sql);
+    }
+
+    public List<Map<String, Object>> getControllerDAORelation() {
+        String sql = "SELECT CONCAT(class_name, \".\", method_name) AS controller, CONCAT(ref_class_name, \".\", ref_method_name) AS DAO FROM controller_dao_analysis WHERE state = 1";
+        return jdbcTemplate.queryForList(sql);
     }
 
     // TODO: 17/3/13 insert,构造参数五个:类名,方法名,表名,操作,时间

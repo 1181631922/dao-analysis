@@ -5,6 +5,10 @@ package com.rili;
  */
 public class Constant {
 
+    public static final String DO_ANALYSIS = "--operation=analysis";
+
+    public static final String TABLES = "--tables=";
+
     public static final String SPACE_AGENCY = "*";
 
     public static final String SPACE = " ";
