@@ -22,8 +22,18 @@ public class SlaveDAO {
     @Resource(name = "jdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
-    public List<Map<String, Object>> test() {
-        String sql = "SELECT * FROM wx_statistics LIMIT 10";
+    public void insertControllerDAO(String className, String methodName, String refClassName, String refMethodName, String date) {
+        String sql = "INSERT IGNORE INTO controller_dao_analysis (class_name, method_name, ref_class_name, ref_method_name, date) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, className, methodName, refClassName, refMethodName, date);
+    }
+
+    public void disableControllerDAO() {
+        String sql = "UPDATE controller_dao_analysis SET state = 0";
+        jdbcTemplate.update(sql);
+    }
+
+    public List<Map<String, Object>> getControllerDAORelation() {
+        String sql = "SELECT CONCAT(class_name, \".\", method_name) AS controller, CONCAT(ref_class_name, \".\", ref_method_name) AS DAO FROM controller_dao_analysis WHERE state = 1";
         return jdbcTemplate.queryForList(sql);
     }
 

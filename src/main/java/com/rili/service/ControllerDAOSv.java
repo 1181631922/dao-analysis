@@ -2,16 +2,20 @@ package com.rili.service;
 
 import com.google.common.collect.Maps;
 import com.rili.Constant;
+import com.rili.dao.SlaveDAO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Map;
 
 /**
@@ -22,6 +26,9 @@ import java.util.Map;
 public class ControllerDAOSv {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerDAOSv.class);
+
+    @Autowired
+    private SlaveDAO slaveDAO;
 
 
     public void analyzeControllerDAOFile(String fullFilePath) {
@@ -93,6 +100,7 @@ public class ControllerDAOSv {
         String[] temp2;
         String tempVariable;
         String tempStr;
+        String date = DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss");
         for (Map.Entry<String, String> fieldDeclarationEntry : mapData.get(Constant.FIELD_DECLARATION_MAP).entrySet()) {
             className = fieldDeclarationEntry.getKey();
             for (String s : StringUtils.splitByWholeSeparator(fieldDeclarationEntry.getValue(), ";")) {
@@ -108,14 +116,14 @@ public class ControllerDAOSv {
                 }
                 for (String str : temp1) {
                     temp2 = StringUtils.splitByWholeSeparator(str.replaceAll(Constant.SPACE, ""), ")(");
-                    methodName = temp2[0] + ")";
+                    methodName = StringUtils.substring(temp2[0], 0, StringUtils.indexOf(temp2[0], "("));
                     for (String rs : StringUtils.splitByWholeSeparator(temp2[1], "**")) {
                         if (StringUtils.contains(rs, tempVariable + ".")) {
                             tempStr = StringUtils.substring(rs, StringUtils.indexOf(rs, tempVariable + "."));
                             refMethodName = StringUtils.splitByWholeSeparator(StringUtils.substring(tempStr, StringUtils.indexOf(tempStr, tempVariable + "."), StringUtils.indexOf(tempStr, "(")), ".")[1];
                             if (!StringUtils.isAnyEmpty(className, methodName, refClassName, refMethodName)) {
                                 LOGGER.info("***** className:{}, methodName:{}, refClassName:{}, refMethodName:{} *****", className, methodName, refClassName, refMethodName);
-
+                                slaveDAO.insertControllerDAO(className, methodName, refClassName, refMethodName, date);
                             }
                         }
                     }
