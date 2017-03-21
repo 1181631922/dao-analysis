@@ -31,15 +31,23 @@ public class SlaveDAO {
         jdbcTemplate.update(sql);
     }
 
-    public List<Map<String, Object>> getControllerDAORelation() {
-        String sql = "SELECT CONCAT(class_name, \".\", method_name) AS controller, CONCAT(ref_class_name, \".\", ref_method_name) AS DAO FROM controller_dao_analysis WHERE state = 1";
-        return jdbcTemplate.queryForList(sql);
-    }
-
     // TODO: 17/3/13 insert,构造参数五个:类名,方法名,表名,操作,时间
     public void insertTable(String clazz, String method, String table, String operation) {
         String sql = "insert into dao_table_analysis(dao_name,dao_method,tb_name,operation) VALUES (?,?,?,?)";
         jdbcTemplate.update(sql, clazz, method, table, operation);
+    }
+
+    public List<Map<String, Object>> getAllTableDAOData() {
+        return jdbcTemplate.queryForList("SELECT dao_name, dao_method, tb_name FROM dao_table_analysis WHERE state = 1 ORDER BY tb_name");
+    }
+
+    public List<Map<String, Object>> getTableDAOData(String tableName) {
+        return jdbcTemplate.queryForList("SELECT dao_name AS class_name, dao_method AS method_name FROM dao_table_analysis WHERE state = 1 AND tb_name = ?", tableName);
+    }
+
+    public List<Map<String, Object>> getClassMethod(String refClassName, String refMethodName) {
+        String sql = "SELECT class_name, method_name FROM controller_dao_analysis WHERE state = 1 AND ref_class_name = ? AND ref_method_name = ?";
+        return jdbcTemplate.queryForList(sql, refClassName, refMethodName);
     }
 
 }

@@ -1,7 +1,9 @@
 package com.rili.service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.rili.Constant;
+import com.rili.bean.RelationBean;
 import com.rili.dao.SlaveDAO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -133,5 +136,29 @@ public class ControllerDAOSv {
 
         }
     }
+
+    public RelationBean getRelation(String tableName) {
+        List<Map<String, Object>> tableDAOData = slaveDAO.getTableDAOData(tableName);
+        List<RelationBean> children = getChildren(tableDAOData);
+        return new RelationBean(tableName, children);
+    }
+
+    private List<RelationBean> getChildren(List<Map<String, Object>> ref) {
+        List<RelationBean> result = Lists.newArrayList();
+        String refClass;
+        String refMethod;
+        for (Map<String, Object> map : ref) {
+            refClass = String.valueOf(map.get("class_name"));
+            refMethod = String.valueOf(map.get("method_name"));
+            RelationBean relationBean = new RelationBean(refClass + "." + refMethod);
+            List<Map<String, Object>> classMethodList = slaveDAO.getClassMethod(refClass, refMethod);
+            if (!classMethodList.isEmpty()) {
+                relationBean.setChildren(getChildren(classMethodList));
+            }
+            result.add(relationBean);
+        }
+        return result;
+    }
+
 
 }

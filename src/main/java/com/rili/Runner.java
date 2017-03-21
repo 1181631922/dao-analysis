@@ -1,6 +1,8 @@
 package com.rili;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.rili.bean.RelationBean;
 import com.rili.dao.SlaveDAO;
 import com.rili.service.ControllerDAOSv;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,7 @@ public class Runner implements CommandLineRunner {
         boolean doTables = false;
         String tempStr;
         String tempStr2;
+        String tables = null;
         List<String> arguments = Lists.newArrayList(strings);
         for (String argument : arguments) {
             LOGGER.info("argument:{}", argument);
@@ -51,6 +54,7 @@ public class Runner implements CommandLineRunner {
                 doAnalysis = true;
             } else if (StringUtils.indexOf(tempStr, Constant.TABLES) == 0) {
                 doTables = true;
+                tables = StringUtils.substring(tempStr, StringUtils.indexOf(tempStr, "=") + 1);
             }
         } else {
             tempStr = StringUtils.replaceAll(arguments.get(0).trim(), " ", "");
@@ -59,23 +63,28 @@ public class Runner implements CommandLineRunner {
                     (Constant.DO_ANALYSIS.equals(tempStr2) && StringUtils.indexOf(tempStr, Constant.TABLES) == 0)) {
                 doAnalysis = true;
                 doTables = true;
+
+                if (StringUtils.indexOf(tempStr2, Constant.TABLES) == 0) {
+                    tables = StringUtils.substring(tempStr2, StringUtils.indexOf(tempStr2, "=") + 1);
+                } else {
+                    tables = StringUtils.substring(tempStr, StringUtils.indexOf(tempStr, "=") + 1);
+                }
             }
         }
 
         if (doAnalysis && doTables) {
             doAnalysis();
-            
+            doTables(tables);
 
         } else if (doAnalysis) {
-            // TODO: 2017/3/16 分析
-
+            doAnalysis();
         } else if (doTables) {
-            // TODO: 2017/3/16 得到表json数据
-
+            doTables(tables);
         }
 
-
     }
+
+
 
     private void doAnalysis() {
         LOGGER.info("controller-dao analysis start...");
@@ -86,10 +95,18 @@ public class Runner implements CommandLineRunner {
         }
         LOGGER.info("controller-dao analysis end...");
         // TODO: 2017/3/16 添加DAO-TABLE分析
+
     }
 
     private void doTables(String tables) {
-        // TODO: 2017/3/16 得到表的json数据 并写入对应文件
+        Gson gson = new Gson();
+        for (String tb : tables.split(",")) {
+            if (StringUtils.isNotEmpty(tb)) {
+                List<RelationBean> result = Lists.newArrayList();
+                result.add(controllerDAOSv.getRelation(tb.trim()));
+                LOGGER.info("******* TABLE:{} RESULT:{} *******", tb, gson.toJson(result));
+            }
+        }
     }
 
 }
