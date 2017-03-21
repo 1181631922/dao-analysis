@@ -84,10 +84,9 @@ public class Runner implements CommandLineRunner {
     }
 
     private void doAnalysis() {
-        LOGGER.info("controller-dao analysis start...");
         try {
 
-            File file = new File("/Users/fanyafeng/Downloads/wine_backend_master/common/src/main/java/com/wine/dao");
+            File file = new File(Constant.SCAN_DIR);
             File[] files = file.listFiles();
             List<File> fileList = new ArrayList<>();
             for (File file1 : files) {
@@ -98,11 +97,8 @@ public class Runner implements CommandLineRunner {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Exception:{}", e);
         }
-
-
-        LOGGER.info("controller-dao analysis end...");
 
     }
 

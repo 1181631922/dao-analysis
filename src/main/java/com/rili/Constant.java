@@ -29,4 +29,6 @@ public class Constant {
 
     public static final String UNCLASSIFIED_USAGE_MAP = "unclassifiedUsageMap";
 
+    public static final String SCAN_DIR="/Users/fanyafeng/Downloads/wine_backend_master/common/src/main/java/com/wine/dao";
+
 }
