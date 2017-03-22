@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by CYM on 2017/3/13.
@@ -139,26 +140,74 @@ public class ControllerDAOSv {
 
     public RelationBean getRelation(String tableName) {
         List<Map<String, Object>> tableDAOData = slaveDAO.getTableDAOData(tableName);
-        List<RelationBean> children = getChildren(tableDAOData);
+        List<RelationBean> children = getDAOChildren(tableDAOData);
         return new RelationBean(tableName, children);
     }
 
-    private List<RelationBean> getChildren(List<Map<String, Object>> ref) {
+//    private List<RelationBean> getChildren(List<Map<String, Object>> ref) {
+//        List<RelationBean> result = Lists.newArrayList();
+//        String refClass;
+//        String refMethod;
+//        for (Map<String, Object> map : ref) {
+//            refClass = String.valueOf(map.get("class_name"));
+//            refMethod = String.valueOf(map.get("method_name"));
+//            RelationBean relationBean = new RelationBean(refClass + "." + refMethod);
+//            List<Map<String, Object>> classMethodList = slaveDAO.getClassMethod(refClass, refMethod);
+//            if (!classMethodList.isEmpty()) {
+//                relationBean.setChildren(getChildren(classMethodList));
+//            }
+//            result.add(relationBean);
+//        }
+//        return result;
+//    }
+
+    private List<RelationBean> getDAOChildren(List<Map<String, Object>> ref) {
         List<RelationBean> result = Lists.newArrayList();
-        String refClass;
-        String refMethod;
+        String daoClass;
+        String daoMethod;
+        RelationBean relationBean;
         for (Map<String, Object> map : ref) {
-            refClass = String.valueOf(map.get("class_name"));
-            refMethod = String.valueOf(map.get("method_name"));
-            RelationBean relationBean = new RelationBean(refClass + "." + refMethod);
-            List<Map<String, Object>> classMethodList = slaveDAO.getClassMethod(refClass, refMethod);
-            if (!classMethodList.isEmpty()) {
-                relationBean.setChildren(getChildren(classMethodList));
-            }
-            result.add(relationBean);
+            daoClass = String.valueOf(map.get("dao_name"));
+            daoMethod = String.valueOf(map.get("dao_method"));
+
+            result.add(getChildren(daoClass, daoMethod));
         }
         return result;
     }
+
+
+    private RelationBean getChildren(String refClass, String refMethod) {
+        RelationBean result = new RelationBean(refClass + "." + refMethod);
+        List<RelationBean> temp = Lists.newArrayList();
+        List<Map<String, Object>> classMethodList = slaveDAO.getClassMethod(refClass, refMethod);
+        List<Map<String, Object>> tempList;
+        List<Map<String, Object>> tempList2;
+        String className;
+        String methodName;
+        String className2;
+        String methodName2;
+        for (Map<String, Object> map : classMethodList) {
+            className = String.valueOf(map.get("class_name"));
+            methodName = String.valueOf(map.get("method_name"));
+            tempList = slaveDAO.getClassMethod(className, methodName);
+            if (tempList.isEmpty()) {
+                temp.add(new RelationBean(className + "." + methodName));
+            } else {
+                for (Map<String, Object> map2 : tempList) {
+                    className2 = String.valueOf(map2.get("class_name"));
+                    methodName2 = String.valueOf(map2.get("method_name"));
+                    tempList2 = slaveDAO.getClassMethod(className2, methodName2);
+                    temp.addAll(tempList2.stream()
+                            .map(map3 -> new RelationBean(String.valueOf(map3.get("class_name")) + "." + String.valueOf(map3.get("method_name"))))
+                            .collect(Collectors.toList()));
+                }
+            }
+        }
+        result.setChildren(temp);
+        return result;
+    }
+
+
 
 
 }

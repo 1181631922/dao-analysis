@@ -42,7 +42,7 @@ public class SlaveDAO {
     }
 
     public List<Map<String, Object>> getTableDAOData(String tableName) {
-        return jdbcTemplate.queryForList("SELECT dao_name AS class_name, dao_method AS method_name FROM dao_table_analysis WHERE state = 1 AND tb_name = ?", tableName);
+        return jdbcTemplate.queryForList("SELECT dao_name, dao_method FROM dao_table_analysis WHERE state = 1 AND tb_name = ?", tableName);
     }
 
     public List<Map<String, Object>> getClassMethod(String refClassName, String refMethodName) {
