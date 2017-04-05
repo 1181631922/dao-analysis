@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.lang.String.valueOf;
+
 /**
  * Created by CYM on 2017/3/13.
  */
@@ -167,8 +169,8 @@ public class ControllerDAOSv {
         String daoMethod;
         RelationBean relationBean;
         for (Map<String, Object> map : ref) {
-            daoClass = String.valueOf(map.get("dao_name"));
-            daoMethod = String.valueOf(map.get("dao_method"));
+            daoClass = valueOf(map.get("dao_name"));
+            daoMethod = valueOf(map.get("dao_method"));
 
             result.add(getChildren(daoClass, daoMethod));
         }
@@ -187,27 +189,100 @@ public class ControllerDAOSv {
         String className2;
         String methodName2;
         for (Map<String, Object> map : classMethodList) {
-            className = String.valueOf(map.get("class_name"));
-            methodName = String.valueOf(map.get("method_name"));
+            className = valueOf(map.get("class_name"));
+            methodName = valueOf(map.get("method_name"));
             tempList = slaveDAO.getClassMethod(className, methodName);
             if (tempList.isEmpty()) {
                 temp.add(new RelationBean(className + "." + methodName));
             } else {
-                for (Map<String, Object> map2 : tempList) {
-                    className2 = String.valueOf(map2.get("class_name"));
-                    methodName2 = String.valueOf(map2.get("method_name"));
-                    tempList2 = slaveDAO.getClassMethod(className2, methodName2);
-                    temp.addAll(tempList2.stream()
-                            .map(map3 -> new RelationBean(String.valueOf(map3.get("class_name")) + "." + String.valueOf(map3.get("method_name"))))
-                            .collect(Collectors.toList()));
-                }
+                temp.addAll(tempList.stream().map(map2 -> new RelationBean(valueOf(map2.get("class_name")) + "." + valueOf(map2.get("method_name")))).collect(Collectors.toList()));
             }
         }
         result.setChildren(temp);
         return result;
     }
 
+    public RelationBean getOrderTest() {
+        RelationBean relationBean = new RelationBean("orders");
+        List<Map<String, Object>> dataList = slaveDAO.getOrdersTest();
+        List<Map<String, Object>> dataListResult = Lists.newArrayListWithExpectedSize(dataList.size() * 2);
+        dataList.forEach(map -> {
+            List<Map<String, Object>> tempList = slaveDAO.getClassMethod(valueOf(map.get("class_name")), valueOf(map.get("method_name")));
+            if (tempList.isEmpty()) {
+                dataListResult.add(map);
+            } else {
+                tempList.forEach(tempMap -> {
+                    tempMap.put("ref_class_name", valueOf(map.get("ref_class_name")));
+                    tempMap.put("ref_method_name", valueOf(map.get("ref_method_name")));
+                });
+                dataListResult.addAll(tempList);
+            }
+        });
+        List<GroupClass> list = Lists.newArrayListWithExpectedSize(dataListResult.size());
+        dataListResult.stream().forEach(map -> {
+            GroupClass groupClass = new GroupClass();
+            groupClass.setClassName(valueOf(map.get("class_name")));
+            groupClass.setMethodName(valueOf(map.get("method_name")));
+            groupClass.setRefClassMethod(valueOf(map.get("ref_class_name")) + "." + valueOf(map.get("ref_method_name")));
+            list.add(groupClass);
+        });
+        List<RelationBean> children = Lists.newArrayList();
+        for (Map.Entry<String, List<GroupClass>> entry : list.stream().collect(Collectors.groupingBy(GroupClass::getClassName)).entrySet()) {
+            RelationBean rb = new RelationBean(entry.getKey());
+            List<RelationBean> childrenTemp1 = Lists.newArrayList();
+            for (Map.Entry<String, List<GroupClass>> e : entry.getValue().stream().collect(Collectors.groupingBy(GroupClass::getMethodName)).entrySet()) {
+                RelationBean rBean = new RelationBean(e.getKey());
+                List<RelationBean> childrenTemp2 = Lists.newArrayList();
+                childrenTemp2.addAll(e.getValue().stream().map(g -> new RelationBean(g.getRefClassMethod())).collect(Collectors.toList()));
+                rBean.setChildren(childrenTemp2);
+                childrenTemp1.add(rBean);
+            }
+            rb.setChildren(childrenTemp1);
+            children.add(rb);
+        }
+        relationBean.setChildren(children);
+        return relationBean;
+    }
 
+    class GroupClass {
+
+        private String className;
+        private String methodName;
+        private String refClassMethod;
+
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+
+        public void setMethodName(String methodName) {
+            this.methodName = methodName;
+        }
+
+        public String getRefClassMethod() {
+            return refClassMethod;
+        }
+
+        public void setRefClassMethod(String refClassMethod) {
+            this.refClassMethod = refClassMethod;
+        }
+
+        @Override
+        public String toString() {
+            return "GroupClass{" +
+                    "className='" + className + '\'' +
+                    ", methodName='" + methodName + '\'' +
+                    ", refClassMethod='" + refClassMethod + '\'' +
+                    '}';
+        }
+    }
 
 
 }
