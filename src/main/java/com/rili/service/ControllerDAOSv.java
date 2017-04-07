@@ -167,7 +167,7 @@ public class ControllerDAOSv {
         List<RelationBean> result = Lists.newArrayList();
         String daoClass;
         String daoMethod;
-        RelationBean relationBean;
+
         for (Map<String, Object> map : ref) {
             daoClass = valueOf(map.get("dao_name"));
             daoMethod = valueOf(map.get("dao_method"));
