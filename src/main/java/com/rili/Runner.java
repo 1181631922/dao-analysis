@@ -5,12 +5,16 @@ import com.google.gson.Gson;
 import com.rili.bean.RelationBean;
 import com.rili.dao.SlaveDAO;
 import com.rili.service.ControllerDAOSv;
+import com.rili.service.DAOTableSv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,8 +38,11 @@ public class Runner implements CommandLineRunner {
     @Value("${filePath.controllerDAO.path}")
     private String[] cdPaths;
 
-    @Value("${analysis.table.name}")
+    @Value("${analysis.table.names}")
     private String[] tableNames;
+
+    @Value("${filePath.DAOTables.path}")
+    private String daoTablesPath;
 
     @Override
     public void run(String... strings) throws Exception {
@@ -46,8 +53,13 @@ public class Runner implements CommandLineRunner {
 //        tablesAnalysis();
 //        LOGGER.info("表数据分析结束...");
     }
-  
+
     private void doAnalysis() {
+        controllerDAOAnalysis();
+        DAOTablesAnalysis();
+    }
+
+    private void controllerDAOAnalysis() {
         LOGGER.info("controller-dao analysis start...");
         slaveDAO.disableControllerDAO();
         for (String filePath : cdPaths) {
@@ -55,21 +67,17 @@ public class Runner implements CommandLineRunner {
             controllerDAOSv.analyzeControllerDAOFile(filePath);
         }
         LOGGER.info("controller-dao analysis end...");
-        // TODO: 2017/3/16 添加DAO-TABLE分析
-    try {
+    }
 
-            File file = new File(Constant.SCAN_DIR);
+    private void DAOTablesAnalysis() {
+        try {
+            File file = new File(daoTablesPath);
             File[] files = file.listFiles();
-            List<File> fileList = new ArrayList<>();
-            for (File file1 : files) {
-                fileList.add(file1);
+            for (File f : files) {
+                daoTableSv.test(f.getAbsolutePath());
             }
-            for (int i = 0; i < fileList.size(); i++) {
-                daoTableSv.test(fileList.get(i).getAbsolutePath());
-            }
-
         } catch (Exception e) {
-            LOGGER.error("Exception:{}", e);
+            LOGGER.error("DAOTablesAnalysis Exception:{}", e);
         }
     }
 
