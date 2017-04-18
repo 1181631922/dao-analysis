@@ -4,7 +4,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
 import com.rili.bean.InsertTableBean;
 import com.rili.dao.SlaveDAO;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -35,24 +35,20 @@ public class DAOTableSv {
 
     private Set<InsertTableBean> insertTableBeanSet = new TreeSet<>();
 
-    public void analysis(String fullFilePath) {
-        if (fullFilePath.contains("/")) {
-            insertTableBeanSet.clear();
-            int fileNameLength = fullFilePath.split("/").length;
-            String fileName = Arrays.asList(fullFilePath.split("/")).get(fileNameLength - 1);
-            try {
-                FileInputStream fileInputStream = new FileInputStream(fullFilePath);
-                CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
-                new MethodChangerVisitor(fileName.replace(".java", ""), insertTableBeanSet).visit(compilationUnit, null);
+    public void getSqlResult(String fullFilePath,String fileName){
+        insertTableBeanSet.clear();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(fullFilePath);
+            CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
+            new MethodChangerVisitor(fileName.replace(".java", ""), insertTableBeanSet).visit(compilationUnit, null);
 
-                System.out.println(insertTableBeanSet.size());
-                List<InsertTableBean> insertTableBeanList = new ArrayList<>(insertTableBeanSet);
-                for (InsertTableBean insertTableBean : insertTableBeanList) {
-                    slaveDAO.insertTable(insertTableBean);
-                }
-            } catch (FileNotFoundException e) {
-                LOGGER.error("FileNotFoundException:{}", e);
+            System.out.println(insertTableBeanSet.size());
+            List<InsertTableBean> insertTableBeanList = new ArrayList<>(insertTableBeanSet);
+            for (InsertTableBean insertTableBean : insertTableBeanList) {
+                slaveDAO.insertTable(insertTableBean);
             }
+        } catch (FileNotFoundException e) {
+            LOGGER.error("FileNotFoundException:{}", e);
         }
     }
 
