@@ -54,10 +54,10 @@ public class SlaveDAO {
         jdbcTemplate.update("INSERT INTO table_json (tb_name,json) VALUES (?,?) ON DUPLICATE KEY UPDATE json = ?", tbName, json, json);
     }
 
-    public List<Map<String, Object>> getOrdersTest() {
+    public List<Map<String, Object>> getTableData(String tbName) {
         return jdbcTemplate.queryForList("SELECT c.class_name, c.method_name, c.ref_class_name, c.ref_method_name " +
                 "FROM dao_table_analysis d LEFT JOIN controller_dao_analysis c on d.dao_name = c.ref_class_name AND d.dao_method = c.ref_method_name " +
-                "WHERE c.state = 1 AND d.state = 1 AND d.tb_name = 'orders' ORDER BY d.tb_name;");
+                "WHERE c.state = 1 AND d.state = 1 AND d.tb_name = ? ORDER BY d.tb_name", tbName);
     }
 
 }

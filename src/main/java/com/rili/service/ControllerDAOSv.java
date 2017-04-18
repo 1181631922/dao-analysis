@@ -202,9 +202,9 @@ public class ControllerDAOSv {
         return result;
     }
 
-    public RelationBean getOrderTest() {
-        RelationBean relationBean = new RelationBean("orders");
-        List<Map<String, Object>> dataList = slaveDAO.getOrdersTest();
+    public RelationBean getTableRelationBean(String tableName) {
+        RelationBean relationBean = new RelationBean(tableName);
+        List<Map<String, Object>> dataList = slaveDAO.getTableData(tableName);
         List<Map<String, Object>> dataListResult = Lists.newArrayListWithExpectedSize(dataList.size() * 2);
         dataList.forEach(map -> {
             List<Map<String, Object>> tempList = slaveDAO.getClassMethod(valueOf(map.get("class_name")), valueOf(map.get("method_name")));

@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.rili.bean.RelationBean;
 import com.rili.dao.SlaveDAO;
 import com.rili.service.ControllerDAOSv;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,61 +33,18 @@ public class Runner implements CommandLineRunner {
     @Value("${filePath.controllerDAO.path}")
     private String[] cdPaths;
 
+    @Value("${analysis.table.name}")
+    private String[] tableNames;
+
     @Override
     public void run(String... strings) throws Exception {
-
-        boolean doAnalysis = false;
-        boolean doTables = false;
-        String tempStr;
-        String tempStr2;
-        String tables = null;
-        List<String> arguments = Lists.newArrayList(strings);
-        for (String argument : arguments) {
-            LOGGER.info("argument:{}", argument);
-        }
-        if (arguments.isEmpty() || arguments.size() > 2) {
-            // 参数报错
-            LOGGER.error("please run with correct arguments...");
-        } else if (arguments.size() == 1) {
-            tempStr = StringUtils.replaceAll(arguments.get(0).trim(), " ", "");
-            if (Constant.DO_ANALYSIS.equals(tempStr)) {
-                doAnalysis = true;
-            } else if (StringUtils.indexOf(tempStr, Constant.TABLES) == 0) {
-                doTables = true;
-                tables = StringUtils.substring(tempStr, StringUtils.indexOf(tempStr, "=") + 1);
-            }
-        } else {
-            tempStr = StringUtils.replaceAll(arguments.get(0).trim(), " ", "");
-            tempStr2 = StringUtils.replaceAll(arguments.get(1).trim(), " ", "");
-            if ((Constant.DO_ANALYSIS.equals(tempStr) && StringUtils.indexOf(tempStr2, Constant.TABLES) == 0) ||
-                    (Constant.DO_ANALYSIS.equals(tempStr2) && StringUtils.indexOf(tempStr, Constant.TABLES) == 0)) {
-                doAnalysis = true;
-                doTables = true;
-
-                if (StringUtils.indexOf(tempStr2, Constant.TABLES) == 0) {
-                    tables = StringUtils.substring(tempStr2, StringUtils.indexOf(tempStr2, "=") + 1);
-                } else {
-                    tables = StringUtils.substring(tempStr, StringUtils.indexOf(tempStr, "=") + 1);
-                }
-            }
-        }
-
-        if (doAnalysis && doTables) {
-            doAnalysis();
-            doTables(tables);
-
-        } else if (doAnalysis) {
-            doAnalysis();
-        } else if (doTables) {
-            doTables(tables);
-        }
-
-        Gson gson = new Gson();
-        List<RelationBean> result = Lists.newArrayList();
-        result.add(controllerDAOSv.getOrderTest());
-        slaveDAO.insertTableJson("orders", gson.toJson(result));
+        LOGGER.info("controller-dao、dao-tables分析...");
+        doAnalysis();
+        LOGGER.info("controller-dao、dao-tables分析结束...");
+//        LOGGER.info("表数据分析...");
+//        tablesAnalysis();
+//        LOGGER.info("表数据分析结束...");
     }
-
 
 
     private void doAnalysis() {
@@ -102,17 +59,22 @@ public class Runner implements CommandLineRunner {
 
     }
 
-    private void doTables(String tables) {
-        Gson gson = new Gson();
-        for (String tb : tables.split(",")) {
-            if (StringUtils.isNotEmpty(tb)) {
-                List<RelationBean> result = Lists.newArrayList();
-                result.add(controllerDAOSv.getRelation(tb.trim()));
-                String json = gson.toJson(result);
-                LOGGER.info("******* TABLE:{} RESULT:{} *******", tb, json);
-                slaveDAO.insertTableJson(tb, json);
-            }
+    private void tablesAnalysis() {
+        LOGGER.info("tables analysis start...");
+        LOGGER.info("tables:{}", Arrays.toString(tableNames));
+        for (String tbName : tableNames) {
+            LOGGER.info("table:{}", tbName);
+            initTableData(tbName);
         }
+        LOGGER.info("tables analysis end...");
+    }
+
+    private void initTableData(String tableName) {
+        Gson gson = new Gson();
+        List<RelationBean> data = Lists.newArrayList();
+        data.add(controllerDAOSv.getTableRelationBean(tableName));
+        slaveDAO.insertTableJson(tableName, gson.toJson(data));
+        LOGGER.info("table:{}, data:{}", tableName, gson.toJson(data));
     }
 
 }
