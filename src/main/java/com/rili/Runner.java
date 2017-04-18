@@ -46,12 +46,13 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        LOGGER.info("controller-dao、dao-tables分析...");
-        doAnalysis();
-        LOGGER.info("controller-dao、dao-tables分析结束...");
+//        LOGGER.info("controller-dao、dao-tables分析...");
+//        doAnalysis();
+//        LOGGER.info("controller-dao、dao-tables分析结束...");
 //        LOGGER.info("表数据分析...");
 //        tablesAnalysis();
 //        LOGGER.info("表数据分析结束...");
+        DAOTablesAnalysis();
     }
 
     private void doAnalysis() {
@@ -67,18 +68,23 @@ public class Runner implements CommandLineRunner {
             controllerDAOSv.analyzeControllerDAOFile(filePath);
         }
         LOGGER.info("controller-dao analysis end...");
+        slaveDAO.deleteControllerDAO();
     }
 
     private void DAOTablesAnalysis() {
+        LOGGER.info("dao-tables analysis start...");
+        LOGGER.info("daoTablesPath:{}", daoTablesPath);
         try {
             File file = new File(daoTablesPath);
             File[] files = file.listFiles();
             for (File f : files) {
-                daoTableSv.test(f.getAbsolutePath());
+                LOGGER.info("dao-tables file:{}", f.getAbsolutePath());
+                daoTableSv.analysis(f.getAbsolutePath());
             }
         } catch (Exception e) {
             LOGGER.error("DAOTablesAnalysis Exception:{}", e);
         }
+        LOGGER.info("dao-tables analysis end...");
     }
 
     private void tablesAnalysis() {

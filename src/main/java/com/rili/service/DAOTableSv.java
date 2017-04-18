@@ -3,9 +3,9 @@ package com.rili.service;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.SynchronizedStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.rili.Bean.InsertTableBean;
+
+import com.rili.bean.InsertTableBean;
 import com.rili.dao.SlaveDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class DAOTableSv {
 
     private Set<InsertTableBean> insertTableBeanSet = new TreeSet<>();
 
-    public void test(String fullFilePath) {
+    public void analysis(String fullFilePath) {
         if (fullFilePath.contains("/")) {
             insertTableBeanSet.clear();
             int fileNameLength = fullFilePath.split("/").length;
