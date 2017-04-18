@@ -46,13 +46,13 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-//        LOGGER.info("controller-dao、dao-tables分析...");
-//        doAnalysis();
-//        LOGGER.info("controller-dao、dao-tables分析结束...");
-//        LOGGER.info("表数据分析...");
-//        tablesAnalysis();
-//        LOGGER.info("表数据分析结束...");
-        DAOTablesAnalysis();
+        LOGGER.info("controller-dao、dao-tables分析...");
+        doAnalysis();
+        LOGGER.info("controller-dao、dao-tables分析结束...");
+        LOGGER.info("表数据分析...");
+        tablesAnalysis();
+        LOGGER.info("表数据分析结束...");
+//        DAOTablesAnalysis();
     }
 
     private void doAnalysis() {
