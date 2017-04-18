@@ -2,7 +2,6 @@ package com.rili;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.rili.bean.RelationBean;
 import com.rili.dao.SlaveDAO;
 import com.rili.service.ControllerDAOSv;
 import com.rili.service.DAOTableSv;
@@ -74,7 +73,7 @@ public class Runner implements CommandLineRunner {
             File file = new File(daoTablesPath);
             File[] files = file.listFiles();
             for (File f : files) {
-                daoTableSv.test(f.getAbsolutePath());
+                daoTableSv.getSqlResult(f.getAbsolutePath(),f.getName());
             }
         } catch (Exception e) {
             LOGGER.error("DAOTablesAnalysis Exception:{}", e);
@@ -93,7 +92,7 @@ public class Runner implements CommandLineRunner {
 
     private void initTableData(String tableName) {
         Gson gson = new Gson();
-        List<RelationBean> data = Lists.newArrayList();
+        List<com.rili.bean.RelationBean> data = Lists.newArrayList();
         data.add(controllerDAOSv.getTableRelationBean(tableName));
         slaveDAO.insertTableJson(tableName, gson.toJson(data));
         LOGGER.info("table:{}, data:{}", tableName, gson.toJson(data));

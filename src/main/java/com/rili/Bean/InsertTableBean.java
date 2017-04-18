@@ -1,4 +1,4 @@
-package com.rili.Bean;
+package com.rili.bean;
 
 /**
  * Author： fanyafeng
