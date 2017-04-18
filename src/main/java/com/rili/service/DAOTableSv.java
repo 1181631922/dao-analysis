@@ -35,27 +35,6 @@ public class DAOTableSv {
 
     private Set<InsertTableBean> insertTableBeanSet = new TreeSet<>();
 
-//    public void test(String fullFilePath) {
-//        if (fullFilePath.contains(File.separator)) {
-//            insertTableBeanSet.clear();
-//            int fileNameLength = fullFilePath.split(File.separator).length;
-//            String fileName = Arrays.asList(fullFilePath.split(File.separator)).get(fileNameLength - 1);
-//            try {
-//                FileInputStream fileInputStream = new FileInputStream(fullFilePath);
-//                CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
-//                new MethodChangerVisitor(fileName.replace(".java", ""), insertTableBeanSet).visit(compilationUnit, null);
-//
-//                System.out.println(insertTableBeanSet.size());
-//                List<InsertTableBean> insertTableBeanList = new ArrayList<>(insertTableBeanSet);
-//                for (InsertTableBean insertTableBean : insertTableBeanList) {
-//                    slaveDAO.insertTable(insertTableBean);
-//                }
-//            } catch (FileNotFoundException e) {
-//                LOGGER.error("FileNotFoundException:{}", e);
-//            }
-//        }
-//    }
-
     public void getSqlResult(String fullFilePath,String fileName){
         insertTableBeanSet.clear();
         try {

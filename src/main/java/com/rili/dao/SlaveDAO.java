@@ -32,7 +32,11 @@ public class SlaveDAO {
         jdbcTemplate.update(sql);
     }
 
-    // TODO: 17/3/13 insert,构造参数五个:类名,方法名,表名,操作,时间
+    public void deleteControllerDAO() {
+        String sql = "DELETE FROM controller_dao_analysis WHERE state = 0";
+        jdbcTemplate.update(sql);
+    }
+
     public void insertTable(InsertTableBean insertTableBean) {
         String sql = "insert ignore into dao_table_analysis(dao_name,dao_method,tb_name,operation) VALUES (?,?,?,?)";
         jdbcTemplate.update(sql, insertTableBean.getClazz(), insertTableBean.getMethod(), insertTableBean.getTable(), insertTableBean.getOperation());
