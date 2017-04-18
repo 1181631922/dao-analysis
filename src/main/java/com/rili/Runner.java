@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,6 +24,9 @@ public class Runner implements CommandLineRunner {
 
     @Autowired
     private ControllerDAOSv controllerDAOSv;
+
+    @Autowired
+    private DAOTableSv daoTableSv;
 
     @Autowired
     private SlaveDAO slaveDAO;
@@ -45,8 +46,7 @@ public class Runner implements CommandLineRunner {
 //        tablesAnalysis();
 //        LOGGER.info("表数据分析结束...");
     }
-
-
+  
     private void doAnalysis() {
         LOGGER.info("controller-dao analysis start...");
         slaveDAO.disableControllerDAO();
@@ -56,7 +56,21 @@ public class Runner implements CommandLineRunner {
         }
         LOGGER.info("controller-dao analysis end...");
         // TODO: 2017/3/16 添加DAO-TABLE分析
+    try {
 
+            File file = new File(Constant.SCAN_DIR);
+            File[] files = file.listFiles();
+            List<File> fileList = new ArrayList<>();
+            for (File file1 : files) {
+                fileList.add(file1);
+            }
+            for (int i = 0; i < fileList.size(); i++) {
+                daoTableSv.test(fileList.get(i).getAbsolutePath());
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Exception:{}", e);
+        }
     }
 
     private void tablesAnalysis() {
