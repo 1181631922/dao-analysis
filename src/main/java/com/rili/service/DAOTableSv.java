@@ -42,7 +42,7 @@ public class DAOTableSv {
             CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
             new MethodChangerVisitor(fileName.replace(".java", ""), insertTableBeanSet).visit(compilationUnit, null);
 
-            System.out.println(insertTableBeanSet.size());
+//            System.out.println(insertTableBeanSet.size());
             List<InsertTableBean> insertTableBeanList = new ArrayList<>(insertTableBeanSet);
             for (InsertTableBean insertTableBean : insertTableBeanList) {
                 slaveDAO.insertTable(insertTableBean);
