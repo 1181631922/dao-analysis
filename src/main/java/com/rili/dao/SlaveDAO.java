@@ -37,6 +37,11 @@ public class SlaveDAO {
         jdbcTemplate.update(sql);
     }
 
+    public void deleteTableDAO(){
+        String sql = "DELETE FROM dao_table_analysis";
+        jdbcTemplate.update(sql);
+    }
+
     public void insertTable(InsertTableBean insertTableBean) {
         String sql = "insert ignore into dao_table_analysis(dao_name,dao_method,tb_name,operation) VALUES (?,?,?,?)";
         jdbcTemplate.update(sql, insertTableBean.getClazz(), insertTableBean.getMethod(), insertTableBean.getTable(), insertTableBean.getOperation());
