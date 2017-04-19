@@ -51,7 +51,6 @@ public class Runner implements CommandLineRunner {
         LOGGER.info("表数据分析...");
         tablesAnalysis();
         LOGGER.info("表数据分析结束...");
-//        DAOTablesAnalysis();
     }
 
     private void doAnalysis() {
