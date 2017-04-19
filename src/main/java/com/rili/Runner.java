@@ -73,11 +73,15 @@ public class Runner implements CommandLineRunner {
     private void DAOTablesAnalysis() {
         LOGGER.info("dao-tables analysis start...");
         LOGGER.info("daoTablesPath:{}", daoTablesPath);
+
+        slaveDAO.disableControllerDAO();
+        slaveDAO.deleteControllerDAO();
+
         try {
             File file = new File(daoTablesPath);
             File[] files = file.listFiles();
             for (File f : files) {
-                daoTableSv.getSqlResult(f.getAbsolutePath(),f.getName());
+                daoTableSv.getSqlResult(f.getAbsolutePath(), f.getName());
                 LOGGER.info("dao-tables file:{}", f.getAbsolutePath());
             }
         } catch (Exception e) {
